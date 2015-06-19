@@ -23,7 +23,8 @@ int __cdecl main(int argc, char **argv)
 	struct addrinfo *result = NULL,
 		*ptr = NULL,
 		hints;
-	char *sendbuf = "this is a test";
+	//char *sendbuf = "this is a test";
+	char *sendbuf = "this is a test message";
 	char recvbuf[DEFAULT_BUFLEN];
 	int iResult;
 	int recvbuflen = DEFAULT_BUFLEN;
@@ -40,6 +41,9 @@ int __cdecl main(int argc, char **argv)
 		printf("WSAStartup failed with error: %d\n", iResult);
 		//return 1;
 	}
+	else{
+		printf("WSAStartup succeeded\n");
+	}
 
 	ZeroMemory(&hints, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
@@ -51,7 +55,11 @@ int __cdecl main(int argc, char **argv)
 	if (iResult != 0) {
 		printf("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();
-		//return 1;
+		return 1;
+	}
+	else{
+		printf("Adress = %s\n", argv[1]);
+		printf("getaddrinfo succeeded\n");
 	}
 
 	// Attempt to connect to an address until one succeeds
@@ -64,6 +72,9 @@ int __cdecl main(int argc, char **argv)
 			printf("socket failed with error: %ld\n", WSAGetLastError());
 			WSACleanup();
 			//return 1;
+		}
+		else{
+			printf("socket succeeded\n");
 		}
 
 		// Connect to server.
@@ -83,6 +94,9 @@ int __cdecl main(int argc, char **argv)
 		WSACleanup();
 		//return 1;
 	}
+	else{
+		printf("Connection to server succeeded\n");
+	}
 
 	// Send an initial buffer
 	iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
@@ -91,6 +105,9 @@ int __cdecl main(int argc, char **argv)
 		closesocket(ConnectSocket);
 		WSACleanup();
 		//return 1;
+	}
+	else{
+		printf("Send succeeded\n");
 	}
 
 	printf("Bytes Sent: %ld\n", iResult);
