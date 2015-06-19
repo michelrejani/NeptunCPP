@@ -11,8 +11,8 @@
 using namespace cv;
 using namespace std;
 
-static int width = 320;
-static int height = 240;
+static int width = 1360;
+static int height = 1024;
 
 #include "CameraFunctions.h"
 int main() {
