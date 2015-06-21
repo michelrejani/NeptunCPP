@@ -43,20 +43,15 @@ int main() {
 			
 
 		tPvHandle Camera = cameras[0];
-		tPvFrame Frame;
+		tPvFrame Frame{};
 		tPvErr generalError;
 
 		Mat imageBuffer = cv::Mat(cv::Size(width, height), CV_8UC3);
-		Mat imageBuffer1 = cv::Mat(cv::Size(1, width*height), CV_8UC3);
-		Mat imageBuffer2 = cv::Mat(cv::Size(width*height,1), CV_8UC3);
-		Mat imageBuffer3 = cv::Mat(cv::Size(width, height), CV_8UC4);
-
 		unsigned long bufferSize = sizeof(Mat) * width * height;
-
 		unsigned long unusedBuffer = 0;
 		unsigned long unusedBufferLength = 1;
 
-		Frame.ImageBuffer = &imageBuffer2;
+		Frame.ImageBuffer = &imageBuffer;
 		Frame.ImageBufferSize = bufferSize;
 		Frame.AncillaryBuffer = &unusedBuffer;
 		Frame.AncillaryBufferSize = unusedBufferLength;
