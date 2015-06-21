@@ -33,27 +33,44 @@ int main() {
 
 		tPvHandle cameras[2];
 
-		CameraGet(2, &cameras);
+		if (!CameraGet(2, cameras[0], cameras[1]))
+		{
+			printf("Camera Handle not aquired\n");
+			system("pause");
+			return 1;
+		}
+
+			
 
 		tPvHandle Camera = cameras[0];
-		tPvFrame FrameAllocation{};
-		tPvFrame *Frame = &FrameAllocation;
+		tPvFrame Frame;
+		tPvErr generalError;
 
 		Mat imageBuffer = cv::Mat(cv::Size(width, height), CV_8UC3);
+		Mat imageBuffer1 = cv::Mat(cv::Size(1, width*height), CV_8UC3);
+		Mat imageBuffer2 = cv::Mat(cv::Size(width*height,1), CV_8UC3);
+		Mat imageBuffer3 = cv::Mat(cv::Size(width, height), CV_8UC4);
 
 		unsigned long bufferSize = sizeof(Mat) * width * height;
+
 		unsigned long unusedBuffer = 0;
 		unsigned long unusedBufferLength = 1;
 
-		Frame->ImageBuffer = &imageBuffer;
-		Frame->ImageBufferSize = bufferSize;
-		Frame->AncillaryBuffer = &unusedBuffer;
-		Frame->AncillaryBufferSize = unusedBufferLength;
+		Frame.ImageBuffer = &imageBuffer2;
+		Frame.ImageBufferSize = bufferSize;
+		Frame.AncillaryBuffer = &unusedBuffer;
+		Frame.AncillaryBufferSize = unusedBufferLength;
 
 		//start driver stream
-		PvCaptureStart(Camera);
+		generalError = PvCaptureStart(Camera);
+		printf("Camera 1 error = %d\n", generalError);
+		generalError = PvCaptureStart(cameras[1]);
+		printf("Camera 2 error = %d\n", generalError);
+		system("pause");
 		//queue frame
-		PvCaptureQueueFrame(Camera, Frame, NULL);
+		generalError = PvCaptureQueueFrame(Camera, &Frame, NULL);
+		printf("Error = %d\n", generalError);
+		system("pause");
 		//set frame triggers to be generated internally
 		PvAttrEnumSet(Camera, "FrameStartTriggerMode", "Freerun");
 		//set camera to receive continuous number of frame triggers
@@ -63,10 +80,15 @@ int main() {
 		do {
 			//wait for frame to return to host
 			printf("first\n");
-			PvCaptureWaitForFrameDone(Camera, Frame, PVINFINITE);
+			PvCaptureWaitForFrameDone(Camera, &Frame, PVINFINITE);
 			imshow("cam", imageBuffer);
+			this_thread::sleep_for(chrono::milliseconds(1000));
+			imwrite("Gray_Image.jpg", imageBuffer);
+			system("pause");	
 			printf("here\n");
-			PvCaptureQueueFrame(Camera, Frame, NULL);
+			tPvErr error = PvCaptureQueueFrame(Camera, &Frame, NULL);
+			printf("%d\n", error);
+
 		} while (true);
 
 
