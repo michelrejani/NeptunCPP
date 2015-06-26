@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <PvApi.h>
 #include <thread>
 
 using namespace cv;
@@ -77,7 +76,7 @@ int main() {
 			printf("first\n");
 			PvCaptureWaitForFrameDone(Camera, &Frame, PVINFINITE);
 			imshow("cam", imageBuffer);
-			this_thread::sleep_for(chrono::milliseconds(1000));
+			this_thread::sleep_for(chrono::milliseconds(500));
 			imwrite("Gray_Image.jpg", imageBuffer);
 			system("pause");	
 			printf("here\n");
